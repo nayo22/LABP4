@@ -16,7 +16,9 @@ class AppContainer extends HTMLElement {
     this.shadowRoot?.addEventListener('cast-vote', (e: Event) => {
       const custom = e as CustomEvent;
       const { fightId, choice } = custom.detail;
-      VoteActions.castVote(fightId, choice);
+    console.log(`[RECEIVED] Guardando voto: ${fightId} = ${choice}`);
+    VoteActions.castVote(fightId, choice);
+
     });
     this.render();
   }
