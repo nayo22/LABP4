@@ -60,11 +60,12 @@ class AppContainer extends HTMLElement {
           data-id="${fight.id}"
           data-a="${fight.a}"
           data-b="${fight.b}"
-          img-a="${fight.imgA}"
-          img-b="${fight.imgB}"
+          data-img-a="${fight.imgA}"
+          data-img-b="${fight.imgB}"
           data-selected="${state.votes[fight.id] ?? ''}"
         ></fight-card>
       `).join('')}
+      
       </div>
     `;
 
