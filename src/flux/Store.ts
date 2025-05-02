@@ -1,77 +1,94 @@
-// src/components/FightCard.ts
-import { VoteActionTypes } from './Actions';
-import { VoteActions } from '../flux/Actions';
+// src/flux/Store.ts
+import { AppDispatcher, Action } from './Dispatcher';
+import { CounterActionTypes, UserActionTypes, VoteActionTypes } from './Actions';
 
+export type User = {
+  name: string;
+  age: number;
+};
 
-export class FightCard extends HTMLElement {
-  static get observedAttributes() {
-    return ['data-id', 'data-a', 'data-b', 'data-selected'];
-  }
+export type State = {
+  count: number;
+  user: User | null;
+  votes: Record<string, 'a' | 'b'>;
+};
 
-  private dataId!: string;
-  private fighterA!: string;
-  private fighterB!: string;
-  private selected!: string;
+type Listener = (state: State) => void;
+
+class Store {
+  private _myState: State = {
+    count: 0,
+    user: null,
+    votes: {}
+  };
+
+  private _listeners: Listener[] = [];
 
   constructor() {
-    super();
-    this.attachShadow({ mode: 'open' });
+    AppDispatcher.register(this._handleActions.bind(this));
   }
 
-  attributeChangedCallback() {
-    this.dataId = this.getAttribute('data-id') || '';
-    this.fighterA = this.getAttribute('data-a') || '';
-    this.fighterB = this.getAttribute('data-b') || '';
-    this.selected = this.getAttribute('data-selected') || '';
-    this.render();
+  getState() {
+    return this._myState;
   }
 
-  handleVote(choice: 'a' | 'b') {
-    if (!this.dataId || this.selected) return; // Ya votó
-    const action = VoteActions.castVote(this.dataId, choice);
-    store.dispatch(action);
+  private _handleActions(action: Action): void {
+    switch (action.type) {
+      case CounterActionTypes.INCREMENT_COUNT:
+        if (typeof action.payload === 'number') {
+          this._myState.count += action.payload;
+        }
+        this._emitChange();
+        break;
+
+      case CounterActionTypes.DECREMENT_COUNT:
+        if (typeof action.payload === 'number') {
+          this._myState.count -= action.payload;
+        }
+        this._emitChange();
+        break;
+
+      case UserActionTypes.SAVE_USER:
+        if (typeof action.payload === 'object') {
+          this._myState.user = action.payload as User;
+        }
+        this._emitChange();
+        break;
+
+      case VoteActionTypes.CAST_VOTE:
+        if (typeof action.payload === 'object') {
+          const { fightId, choice } = action.payload as { fightId: string; choice: 'a' | 'b' };
+          this._myState.votes = {
+            ...this._myState.votes,
+            [fightId]: choice
+          };
+        }
+        this._emitChange();
+        break;
+
+      case VoteActionTypes.RESET_VOTES:
+        this._myState.votes = {};
+        this._emitChange();
+        break;
+    }
   }
 
-  render() {
-    if (!this.shadowRoot) return;
+  private _emitChange(): void {
+    const state = this.getState();
+    for (const listener of this._listeners) {
+      listener(state);
+    }
+  }
 
-    this.shadowRoot.innerHTML = `
-      <style>
-        .card {
-          display: flex;
-          justify-content: space-between;
-          padding: 10px;
-          border: 2px solid #ddd;
-          border-radius: 8px;
-          font-family: sans-serif;
-        }
-        .option {
-          flex: 1;
-          padding: 10px;
-          margin: 5px;
-          text-align: center;
-          border-radius: 6px;
-          cursor: pointer;
-          border: 2px solid transparent;
-          transition: background 0.2s, border 0.2s;
-        }
-        .option:hover {
-          background-color: #f0f0f0;
-        }
-        .selected {
-          border-color: #007BFF;
-          background-color: #e6f0ff;
-        }
-      </style>
-      <div class="card">
-        <div class="option ${this.selected === 'a' ? 'selected' : ''}" id="a">${this.fighterA}</div>
-        <div class="option ${this.selected === 'b' ? 'selected' : ''}" id="b">${this.fighterB}</div>
-      </div>
-    `;
+  subscribe(listener: Listener): void {
+    this._listeners.push(listener);
+    listener(this.getState());
+  }
 
-    this.shadowRoot.querySelector('#a')?.addEventListener('click', () => this.handleVote('a'));
-    this.shadowRoot.querySelector('#b')?.addEventListener('click', () => this.handleVote('b'));
+  unsubscribe(listener: Listener): void {
+    this._listeners = this._listeners.filter(l => l !== listener);
   }
 }
 
-customElements.define('fight-card', FightCard);
+export const store = new Store();
+

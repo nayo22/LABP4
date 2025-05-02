@@ -32,7 +32,7 @@ class VoteBar extends HTMLElement {
 
     const allVotes = Object.entries(state.votes)
       .filter(([id]) => id === this.fightId)
-      .map(([_, value]) => value);
+      .map(([, value]) => value)
 
     const total = allVotes.length;
     const aVotes = allVotes.filter((v) => v === 'a').length;
