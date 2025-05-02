@@ -1,5 +1,6 @@
 // src/components/AppContainer.ts
 import { State, store } from '../flux/Store';
+import { VoteActions } from '../flux/Actions';
 import { fights } from '../assets/fightData';
 import './FightCard';
 import './VoteBar';
@@ -12,6 +13,11 @@ class AppContainer extends HTMLElement {
 
   connectedCallback() {
     store.subscribe((state: State) => this.render(state));
+    this.shadowRoot?.addEventListener('cast-vote', (e: Event) => {
+      const custom = e as CustomEvent;
+      const { fightId, choice } = custom.detail;
+      VoteActions.castVote(fightId, choice);
+    });
     this.render();
   }
 
@@ -49,14 +55,16 @@ class AppContainer extends HTMLElement {
       <h1>🔥 La Velada del Año - Votaciones 🔥</h1>
       <button id="reset-btn">🧹 Reiniciar Votaciones</button>
       <div class="container">
-        ${fights.map((fight) => `
-          <fight-card
-            data-id="${fight.id}"
-            data-a="${fight.a}"
-            data-b="${fight.b}"
-            data-selected="${state.votes[fight.id] ?? ''}"
-          ></fight-card>
-        `).join('')}
+      ${fights.map((fight) => `
+        <fight-card
+          data-id="${fight.id}"
+          data-a="${fight.a}"
+          data-b="${fight.b}"
+          img-a="${fight.imgA}"
+          img-b="${fight.imgB}"
+          data-selected="${state.votes[fight.id] ?? ''}"
+        ></fight-card>
+      `).join('')}
       </div>
     `;
 
