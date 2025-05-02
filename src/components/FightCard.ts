@@ -45,38 +45,52 @@ export class FightCard extends HTMLElement {
 
 		this.shadowRoot.innerHTML = `
       <style>
-        .card {
-          display: flex;
-          justify-content: space-between;
-          padding: 10px;
-          border: 2px solid #ddd;
-          border-radius: 8px;
-          font-family: sans-serif;
-        }
-        .option {
-          flex: 1;
-          padding: 10px;
-          margin: 5px;
-          text-align: center;
-          border-radius: 6px;
-          cursor: pointer;
-          border: 2px solid transparent;
-          transition: background 0.2s, border 0.2s;
-        }
-        .option:hover {
-          background-color: #f0f0f0;
-        }
-        .selected {
-          border-color: #007BFF;
-          background-color: #e6f0ff;
-        }
-        img {
-          width: 100px;
-          height: auto;
-          border-radius: 6px;
-          margin-bottom: 8px;
-        }
-      </style>
+  .card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    font-family: 'Segoe UI', sans-serif;
+  }
+
+  .option {
+    flex: 1;
+    padding: 12px;
+    margin: 0 10px;
+    text-align: center;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 2px solid transparent;
+  }
+
+  .option:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .selected {
+    border: 2px solidrgb(113, 113, 113);
+    background-color:rgb(224, 199, 254);
+  }
+
+  img {
+    width: 100px;
+    height: auto;
+    object-fit: contain;
+    border-radius: 6px;
+    margin-bottom: 6px;
+  }
+
+  .name {
+    font-weight: 500;
+    font-size: 1rem;
+    color: #333;
+  }
+</style>
       <div class="card">
         <div class="option ${this.selected === 'a' ? 'selected' : ''}" id="a">
           <img src="${this.imgA}" alt="${this.fighterA}" />
