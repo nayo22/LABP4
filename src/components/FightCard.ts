@@ -1,6 +1,3 @@
-// src/components/FightCard.ts
-import { VoteActions } from '../flux/Actions';
-
 export class FightCard extends HTMLElement {
 	static get observedAttributes() {
 		return ['data-id', 'data-a', 'data-b', 'data-img-a', 'data-img-b', 'data-selected'];
@@ -30,7 +27,17 @@ export class FightCard extends HTMLElement {
 
 	handleVote(choice: 'a' | 'b') {
 		if (!this.dataId || this.selected) return;
-		VoteActions.castVote(this.dataId, choice);
+
+		const event = new CustomEvent('cast-vote', {
+			bubbles: true,
+			composed: true,
+			detail: {
+				fightId: this.dataId,
+				choice,
+			},
+		});
+
+		this.dispatchEvent(event);
 	}
 
 	render() {
