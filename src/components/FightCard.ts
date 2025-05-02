@@ -2,41 +2,41 @@
 import { VoteActions } from '../flux/Actions';
 
 export class FightCard extends HTMLElement {
-  static get observedAttributes() {
-    return ['data-id', 'data-a', 'data-b', 'data-img-a', 'data-img-b', 'data-selected'];
-  }
+	static get observedAttributes() {
+		return ['data-id', 'data-a', 'data-b', 'data-img-a', 'data-img-b', 'data-selected'];
+	}
 
-  private dataId!: string;
-  private fighterA!: string;
-  private fighterB!: string;
-  private imgA!: string;
-  private imgB!: string;
-  private selected!: string;
+	private dataId!: string;
+	private fighterA!: string;
+	private fighterB!: string;
+	private imgA!: string;
+	private imgB!: string;
+	private selected!: string;
 
-  constructor() {
-    super();
-    this.attachShadow({ mode: 'open' });
-  }
+	constructor() {
+		super();
+		this.attachShadow({ mode: 'open' });
+	}
 
-  attributeChangedCallback() {
-    this.dataId = this.getAttribute('data-id') || '';
-    this.fighterA = this.getAttribute('data-a') || '';
-    this.fighterB = this.getAttribute('data-b') || '';
-    this.imgA = this.getAttribute('data-img-a') || '';
-    this.imgB = this.getAttribute('data-img-b') || '';
-    this.selected = this.getAttribute('data-selected') || '';
-    this.render();
-  }
+	attributeChangedCallback() {
+		this.dataId = this.getAttribute('data-id') || '';
+		this.fighterA = this.getAttribute('data-a') || '';
+		this.fighterB = this.getAttribute('data-b') || '';
+		this.imgA = this.getAttribute('data-img-a') || '';
+		this.imgB = this.getAttribute('data-img-b') || '';
+		this.selected = this.getAttribute('data-selected') || '';
+		this.render();
+	}
 
-  handleVote(choice: 'a' | 'b') {
-    if (!this.dataId || this.selected) return;
-    VoteActions.castVote(this.dataId, choice);
-  }
+	handleVote(choice: 'a' | 'b') {
+		if (!this.dataId || this.selected) return;
+		VoteActions.castVote(this.dataId, choice);
+	}
 
-  render() {
-    if (!this.shadowRoot) return;
+	render() {
+		if (!this.shadowRoot) return;
 
-    this.shadowRoot.innerHTML = `
+		this.shadowRoot.innerHTML = `
       <style>
         .card {
           display: flex;
@@ -80,11 +80,12 @@ export class FightCard extends HTMLElement {
           <div>${this.fighterB}</div>
         </div>
       </div>
+      <vote-bar fight-id="${this.dataId}"></vote-bar>
     `;
 
-    this.shadowRoot.querySelector('#a')?.addEventListener('click', () => this.handleVote('a'));
-    this.shadowRoot.querySelector('#b')?.addEventListener('click', () => this.handleVote('b'));
-  }
+		this.shadowRoot.querySelector('#a')?.addEventListener('click', () => this.handleVote('a'));
+		this.shadowRoot.querySelector('#b')?.addEventListener('click', () => this.handleVote('b'));
+	}
 }
 
 customElements.define('fight-card', FightCard);

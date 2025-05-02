@@ -50,10 +50,19 @@ class AppContainer extends HTMLElement {
         button#reset-btn:hover {
           background-color: #bb2d3b;
         }
+          .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
       </style>
 
-      <h1>🔥 La Velada del Año - Votaciones 🔥</h1>
-      <button id="reset-btn">🧹 Reiniciar Votaciones</button>
+      <h1>🌚La Velada del Año - Votacionesss pro😈 </h1>
+      <div class="button-container">
+  <button id="reset-btn">Reiniciar Votaciones GG</button>
+    </div>
+
       <div class="container">
       ${fights.map((fight) => `
         <fight-card
@@ -65,7 +74,7 @@ class AppContainer extends HTMLElement {
           data-selected="${state.votes[fight.id] ?? ''}"
         ></fight-card>
       `).join('')}
-      
+
       </div>
     `;
 
